@@ -109,8 +109,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(Location location) {
                 if(location!=null) {
-                    final double latitude=location.getLatitude();
-                    final double longitude=location.getLongitude();
+                    double latitude=location.getLatitude();
+                    double longitude=location.getLongitude();
                     Retrofit retrofit=new Retrofit.Builder().baseUrl("https://api.openweathermap.org").addConverterFactory(GsonConverterFactory.create()).build();
                     JSONPlaceHolderAPI jsonPlaceHolderAPI=retrofit.create(JSONPlaceHolderAPI.class);
                     Call<Home_Fragment_Details> call=jsonPlaceHolderAPI.getPost(latitude,longitude,"metric",key);
@@ -146,8 +146,7 @@ public class HomeFragment extends Fragment {
                         }
                         @Override
                         public void onFailure(Call<Home_Fragment_Details> call, Throwable t) {
-                            Log.e("TAG",t.getMessage());
-                            place_container.setText(latitude+" "+longitude);
+
                         }
                     });
                 }else{
