@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="15dp"
+    android:layout_margin="2dp"
+    app:cardBackgroundColor="#602B608A"
+    android:elevation="0dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp">
+        <TextView
+            android:id="@+id/day"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_width="125dp"
+            android:layout_height="25dp"
+            android:padding="2dp"/>
+        <ImageView
+            android:id="@+id/daily_icon"
+            android:layout_width="140dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/day"
+            android:padding="2dp">
+        </ImageView>
+        <TextView
+            android:id="@+id/daily_temp"
+            android:textAlignment="center"
+            android:layout_width="90dp"
+            android:layout_height="100dp"
+            android:autoSizeTextType="uniform"
+            android:layout_below="@id/daily_icon"/>
+        <TextView
+            android:id="@+id/daily_celsius"
+            android:autoSizeTextType="uniform"
+            android:gravity="left"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_below="@id/daily_icon"
+            android:layout_toEndOf="@id/daily_temp"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
