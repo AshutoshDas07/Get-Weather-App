@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,6 +26,10 @@ import static androidx.core.graphics.drawable.DrawableCompat.*;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navigationView;
+    final Fragment homefragment=new HomeFragment();
+    final Fragment searchfragmenet=new ForecastFragment();
+    Fragment active=homefragment;
+    FragmentManager fragmentManager=getSupportFragmentManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,21 +38,22 @@ public class MainActivity extends AppCompatActivity {
         Drawable wrappedDrawable = wrap(homeicon);
         setTint(wrappedDrawable,Color.RED);
         navigationView =findViewById(R.id.nav_bar);
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container,new HomeFragment()).commit();
+        fragmentManager.beginTransaction().add(R.id.frame_container,searchfragmenet,"2").hide(searchfragmenet).commit();
+        fragmentManager.beginTransaction().add(R.id.frame_container,homefragment,"1").commit();
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment selectedFragment=null;
                 switch(item.getItemId()){
                     case R.id.Home:
-                        selectedFragment=new HomeFragment();
-                        break;
+                        fragmentManager.beginTransaction().hide(active).show(homefragment).commit();
+                        active=homefragment;
+                        return true;
                     case R.id.Forecast:
-                        selectedFragment=new ForecastFragment();
-                        break;
+                        fragmentManager.beginTransaction().hide(active).show(searchfragmenet).commit();
+                        active=searchfragmenet;
+                        return true;
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.frame_container,selectedFragment).commit();
-                return true;
+                return false;
             }
         });
     }

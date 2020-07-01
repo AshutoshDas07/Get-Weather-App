@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -108,7 +109,7 @@ public class ForecastFragment extends Fragment {
                     call.enqueue(new Callback<Home_Fragment_Details>() {
                         @Override
                         public void onResponse(Call<Home_Fragment_Details> call, Response<Home_Fragment_Details> response) {
-                            if(isAdded()) {
+                            if(isAdded()&&response.isSuccessful()) {
                                 Home_Fragment_Details home_fragment_details = response.body();
                                 latitude = home_fragment_details.getCoord().getLat();
                                 longitude = home_fragment_details.getCoord().getLon();
@@ -120,11 +121,13 @@ public class ForecastFragment extends Fragment {
                                 place_search_container.setText(home_fragment_details.getName());
                                 Glide.with(getContext()).load(icon_baseURL + home_fragment_details.getWeather()[0].getIcon() + icon_latterURL).into(weather_icon_search);
                                 getForecast(latitude, longitude,home_fragment_details.getWeather()[0].getId());
+                            }else{
+                                Toast.makeText(getContext(),"Location Not Found",Toast.LENGTH_SHORT).show();
                             }
                         }
                         @Override
                         public void onFailure(Call<Home_Fragment_Details> call, Throwable t) {
-
+                            Toast.makeText(getContext(),"Try Loading After Sometime",Toast.LENGTH_SHORT).show();
                         }
                     });
                 return true;
@@ -177,13 +180,13 @@ public class ForecastFragment extends Fragment {
             relativeLayout.setBackgroundResource(R.drawable.heavyrain);
         }else if(id.charAt(0)=='6'){
             relativeLayout.setBackgroundResource(R.drawable.cold);
-        }else if(id.charAt(0)=='7'||id.equals("800")&& hour>=20&&hour<4){
+        }else if((id.charAt(0)=='7'||id.equals("800"))&& (hour>=20&&hour<4)){
             relativeLayout.setBackgroundResource(R.drawable.clearnightsky);
-        }else if(id.charAt(0)=='7'||id.equals("800")&& hour>16&&hour<20){
+        }else if((id.charAt(0)=='7'||id.equals("800"))&& (hour>16&&hour<20)){
             relativeLayout.setBackgroundResource(R.drawable.eveningsky);
-        }else if(id.charAt(0)=='7'||id.equals("800")&& hour>=5&&hour<12){
+        }else if((id.charAt(0)=='7'||id.equals("800"))&& (hour>=5&&hour<12)){
             relativeLayout.setBackgroundResource(R.drawable.sunny);
-        }else if(id.charAt(0)=='7'||id.equals("800")&&hour>=12&&hour<16){
+        }else if((id.charAt(0)=='7'||id.equals("800"))&&(hour>=12&&hour<16)){
             relativeLayout.setBackgroundResource(R.drawable.hot);
         }else {
             relativeLayout.setBackgroundResource(R.drawable.cloudy);

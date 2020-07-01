@@ -6,23 +6,20 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spannable;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DigitalClock;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -35,7 +32,6 @@ import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +40,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class HomeFragment extends Fragment {
+    public class HomeFragment extends Fragment {
     TextView place_container,temp_container,weather_status,celsius;
     TextView clouds_text,pressure_text,humidity_text,winds_text;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -118,7 +114,7 @@ public class HomeFragment extends Fragment {
                     call.enqueue(new Callback<Home_Fragment_Details>() {
                         @Override
                         public void onResponse(Call<Home_Fragment_Details> call, Response<Home_Fragment_Details> response) {
-                            if(isAdded()) {
+                            if(isAdded()&&response.isSuccessful()) {
                                 Home_Fragment_Details home_fragment_details = response.body();
                                 Spanned superscript = Html.fromHtml("<sup>o</sup>C");
                                 double temp = Double.parseDouble(home_fragment_details.getMain().getTemp());
@@ -142,6 +138,8 @@ public class HomeFragment extends Fragment {
                                 humidity_text.setText((home_fragment_details.getMain().getHumidity()) + "%");
                                 winds_text.setText(home_fragment_details.getWind().getSpeed() + "m/sec");
                                 clock.setVisibility(View.VISIBLE);
+                            }else{
+                                Toast.makeText(getContext(),"Current Location Not Found",Toast.LENGTH_LONG).show();
                             }
                         }
                         @Override
@@ -167,7 +165,6 @@ public class HomeFragment extends Fragment {
         Calendar calendar=Calendar.getInstance();
         String time=formatter.format(calendar.getTime());
         int hour=Integer.parseInt(time.substring(0,2));
-
        if(id.charAt(0)=='2') {
            swipeRefreshLayout.setBackgroundResource(R.drawable.storm);
        }else if(id.charAt(0)=='3'){
@@ -176,13 +173,13 @@ public class HomeFragment extends Fragment {
            swipeRefreshLayout.setBackgroundResource(R.drawable.heavyrain);
        }else if(id.charAt(0)=='6') {
             swipeRefreshLayout.setBackgroundResource(R.drawable.cold);
-       }else if(id.charAt(0)=='7'||id.equals("800")&& hour>=20&&hour<4){
+       }else if((id.charAt(0)=='7'||id.equals("800") )&& (hour>=20&&hour<4)){
            swipeRefreshLayout.setBackgroundResource(R.drawable.clearnightsky);
-       }else if(id.charAt(0)=='7'||id.equals("800")&& hour>16&&hour<20){
+       }else if((id.charAt(0)=='7'||id.equals("800"))&& (hour>16&&hour<20)){
            swipeRefreshLayout.setBackgroundResource(R.drawable.eveningsky);
-       }else if(id.charAt(0)=='7'||id.equals("800")&& hour>=5&&hour<12){
+       }else if((id.charAt(0)=='7'||id.equals("800"))&& (hour>=5&&hour<12)){
            swipeRefreshLayout.setBackgroundResource(R.drawable.sunny);
-       }else if(id.charAt(0)=='7'||id.equals("800")&&hour>=12&&hour<16){
+       }else if((id.charAt(0)=='7'||id.equals("800"))&&(hour>=12&&hour<16)){
            swipeRefreshLayout.setBackgroundResource(R.drawable.hot);
         }else{
            swipeRefreshLayout.setBackgroundResource(R.drawable.cloudy);
