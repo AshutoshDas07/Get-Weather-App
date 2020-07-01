@@ -1,5 +1,6 @@
 package com.example.myweatherapp;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
@@ -31,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 
@@ -103,9 +105,16 @@ public class ForecastFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Retrofit retrofit = new Retrofit.Builder().baseUrl(BaseUrl).addConverterFactory(GsonConverterFactory.create()).build();
+                    Retrofit retrofit = new Retrofit.Builder().baseUrl(BaseUrl).addConverterFactory(GsonConverterFactory.create()).build();
                     JSONPlaceHolderAPI jsonPlaceHolderAPI = retrofit.create(JSONPlaceHolderAPI.class);
                     Call<Home_Fragment_Details> call = jsonPlaceHolderAPI.getPost(query,"metric", key);
+                final ProgressDialog progressDoalog;
+                progressDoalog = new ProgressDialog(getContext());
+                progressDoalog.setMax(100);
+                progressDoalog.setMessage("Its loading....");
+                progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                // show it
+                progressDoalog.show();
                     call.enqueue(new Callback<Home_Fragment_Details>() {
                         @Override
                         public void onResponse(Call<Home_Fragment_Details> call, Response<Home_Fragment_Details> response) {
@@ -120,14 +129,16 @@ public class ForecastFragment extends Fragment {
                                 search_status.setText(home_fragment_details.getWeather()[0].getMain());
                                 place_search_container.setText(home_fragment_details.getName());
                                 Glide.with(getContext()).load(icon_baseURL + home_fragment_details.getWeather()[0].getIcon() + icon_latterURL).into(weather_icon_search);
-                                getForecast(latitude, longitude,home_fragment_details.getWeather()[0].getId());
+                                getForecast(latitude, longitude,home_fragment_details.getWeather()[0].getId(),progressDoalog);
                             }else{
                                 Toast.makeText(getContext(),"Location Not Found",Toast.LENGTH_SHORT).show();
+                                progressDoalog.dismiss();
                             }
                         }
                         @Override
                         public void onFailure(Call<Home_Fragment_Details> call, Throwable t) {
                             Toast.makeText(getContext(),"Try Loading After Sometime",Toast.LENGTH_SHORT).show();
+                            progressDoalog.dismiss();
                         }
                     });
                 return true;
@@ -137,7 +148,7 @@ public class ForecastFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    void getForecast(String latitude, String longitude, final String id){
+    void getForecast(String latitude, String longitude, final String id, final ProgressDialog progressDialog){
         Retrofit retrofit1 = new Retrofit.Builder().baseUrl(BaseUrl).addConverterFactory(GsonConverterFactory.create()).build();
         JSONPlaceHolderAPI jsonPlaceHolderAPI1 = retrofit1.create(JSONPlaceHolderAPI.class);
         Call<Forecast_Fragment_Details> call1 = jsonPlaceHolderAPI1.getFragPost(latitude, longitude, "minutely,hourly,current","metric", key);
@@ -154,6 +165,7 @@ public class ForecastFragment extends Fragment {
                     myclock.setTimeZone(forecast_fragment_details.getTimezone());
                     myclock.setVisibility(View.VISIBLE);
                     setBackground(id);
+                    progressDialog.dismiss();
                 }
             }
 
